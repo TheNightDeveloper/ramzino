@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -17,6 +18,7 @@ const kbuttonColor = Color(0xd500ff87);
 const ktextColor = Color(0xffF7EFE5);
 // const kbgColor = Color(0xf9FEFEFE);
 const kbgColor = Color.fromARGB(255, 249, 249, 249);
+const kWhiteColor = Color.fromARGB(255, 255, 255, 255);
 
 TextStyle kLargeTextStyle = TextStyle(
   color: ktextColor,
@@ -47,8 +49,6 @@ final secureStorage = FlutterSecureStorage(aOptions: _getAndroidOptions());
 const passwordBox = 'PasswordsBox';
 late final Box passwordsbox;
 
-
-
 //////////////
 AndroidOptions _getAndroidOptions() => const AndroidOptions(
       encryptedSharedPreferences: true,
@@ -57,8 +57,7 @@ AndroidOptions _getAndroidOptions() => const AndroidOptions(
 Future init() async {
   WidgetsFlutterBinding.ensureInitialized();
   await depInjSetup();
-  // await Parse().initialize(_keyApplicationId, _keyParseServerUrl,
-  //     clientKey: _keyClientKey, autoSendSessionId: true);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   sharedPreferencesService = await SharedPreferencesService().init();
   final encryptionKeyString = await secureStorage.read(key: 'key');
   if (encryptionKeyString == null) {
@@ -70,7 +69,6 @@ Future init() async {
   }
   final key = await secureStorage.read(key: 'key');
   final encryptionKeyUint8List = base64Url.decode(key!);
-  print('Encryption key Uint8List: $encryptionKeyUint8List');
   await Hive.initFlutter();
   Hive.registerAdapter<PasswordModel>(PasswordModelAdapter());
   Hive.registerAdapter<PasswordType>(PasswordTypeAdapter());

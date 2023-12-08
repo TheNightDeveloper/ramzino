@@ -15,24 +15,21 @@ class PasswordState extends Equatable {
       {List<PasswordEntity>? allPasswords,
       List<PasswordEntity>? socialList,
       List<PasswordEntity>? creditCardList,
-      List<PasswordEntity>? favoriteList,
       List<PasswordEntity>? otherList,
-      List<PasswordEntity>? recentUsedList,
+      List<PasswordEntity>? mostUseList,
       List<PasswordEntity>? webSiteList})
       : allPasswords = allPasswords ?? [],
         socialList = socialList ?? [],
         creditCardList = creditCardList ?? [],
-        favoriteList = favoriteList ?? [],
         otherList = otherList ?? [],
-        recentUsedList = recentUsedList ?? [],
+        mostUseList = mostUseList ?? [],
         webSiteList = webSiteList ?? [];
 
   final List<PasswordEntity> socialList;
   final List<PasswordEntity> otherList;
   final List<PasswordEntity> creditCardList;
   final List<PasswordEntity> webSiteList;
-  final List<PasswordEntity> favoriteList;
-  final List<PasswordEntity> recentUsedList;
+  final List<PasswordEntity> mostUseList;
 
   @override
   List<Object?> get props => [
@@ -41,25 +38,21 @@ class PasswordState extends Equatable {
         otherList,
         creditCardList,
         webSiteList,
-        favoriteList,
-        recentUsedList
+        mostUseList
       ];
 
   static PasswordState copyWith(Map<String, List<PasswordEntity>> passwordMap) {
     return PasswordState(
-      allPasswords: passwordMap['All']??[],
-      creditCardList: passwordMap['CreditCard']??[],
-      otherList: passwordMap['Other']??[],
-      socialList: passwordMap['Social']??[],
-      webSiteList: passwordMap['WebSite']??[]
-    );
+        allPasswords: passwordMap['All'] ?? [],
+        creditCardList: passwordMap['CreditCard'] ?? [],
+        otherList: passwordMap['Other'] ?? [],
+        socialList: passwordMap['Social'] ?? [],
+        webSiteList: passwordMap['WebSite'] ?? [],
+        mostUseList: passwordMap['MostUse'] ?? []);
   }
 }
 
-class GetAllPasswordState extends PasswordState {
-  final List<PasswordEntity> passwordsList;
-  GetAllPasswordState(this.passwordsList) : super(allPasswords: passwordsList);
-}
+class AddToMostUseState extends PasswordState {}
 
 class LoadingState extends PasswordState {}
 
@@ -71,3 +64,5 @@ class ErrorState extends PasswordState {
 class PasswordAddedState extends PasswordState {}
 
 class PasswordDeletedState extends PasswordState {}
+
+class PasswordUpdatedState extends PasswordState {}

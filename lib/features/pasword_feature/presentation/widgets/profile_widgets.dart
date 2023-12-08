@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_glow/flutter_glow.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ramzino/core/utils/const.dart';
+import 'package:ramzino/features/pasword_feature/skeleton/page_resources.dart';
 
-import '../../../../config/routes/names.dart';
+import '../../../auth_feature/presentation/bloc/auth_bloc.dart';
 
 class MenuContainer extends StatefulWidget {
   final BuildContext context;
@@ -14,8 +11,14 @@ class MenuContainer extends StatefulWidget {
 }
 
 class _MenuContainerState extends State<MenuContainer> {
+  final TextEditingController _passwordController =
+      TextEditingController(text: 'username');
+  // final TextEditingController _passwordController =
+  //     TextEditingController(text: 'password');
+
   @override
   Widget build(BuildContext context) {
+    String username = context.read<AuthBloc>().state.userEntity!.username;
     return Material(
       color: kbgColor,
       elevation: 20,
@@ -37,40 +40,12 @@ class _MenuContainerState extends State<MenuContainer> {
                   topRight: Radius.circular(25), topLeft: Radius.circular(25))),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              vertical: 25.h,
+              vertical: 15.h,
               horizontal: 15.w,
             ),
             child: Column(
               children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.profileSettingPage);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: kbgColor,
-                          border: Border(
-                              bottom: BorderSide(
-                                  color: Colors.grey.withOpacity(0.4)))),
-                      // color: kbgColor,
-                      height: 50.h,
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.grey,
-                          ),
-                          Text(
-                            'اطلاعات حساب کاربری',
-                            style: kmediumTextStyle.copyWith(
-                                color: Colors.black87),
-                          )
-                        ],
-                      ),
-                    )),
+                /// DARK MODE SWITCH
                 Container(
                   decoration: BoxDecoration(
                       color: kbgColor,
@@ -83,14 +58,17 @@ class _MenuContainerState extends State<MenuContainer> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _CustomGlowSwitch(),
+                       _CustomSwitch(),
                       Text(
                         'حالت تاریک',
-                        style: kmediumTextStyle.copyWith(color: Colors.black87),
+                        style: kmediumTextStyle.copyWith(
+                            color: Colors.black87, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
                 ),
+
+                /// FINGERPRINT LOGIN SWITCH
                 Container(
                   decoration: BoxDecoration(
                       color: kbgColor,
@@ -103,13 +81,79 @@ class _MenuContainerState extends State<MenuContainer> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _CustomGlowSwitch(),
+                       _CustomSwitch(),
                       Text(
-                        'جایگذاری خودکار',
-                        style: kmediumTextStyle.copyWith(color: Colors.black87),
+                        'ورود با شناسایی اثرانگشت ',
+                        style: kmediumTextStyle.copyWith(
+                            color: Colors.black87, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
+                ),
+
+                ExpansionTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  backgroundColor: Colors.white,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(
+                    'اطلاعات حساب کاربری',
+                    textAlign: TextAlign.right,
+                    style: kmediumTextStyle.copyWith(
+                        color: Colors.black87, fontWeight: FontWeight.bold),
+                  ),
+                  children: [
+                    Divider(
+                      thickness: 1,
+                      color: Colors.grey.withOpacity(0.4),
+                    ),
+                    ListTile(
+                      leading: IconButton(
+                        icon: const Icon(
+                          Icons.edit,
+                          color: kbuttonColor,
+                        ),
+                        onPressed: () {},
+                      ),
+                      dense: true,
+                      title: Text('نام کاربری:',
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          style:
+                              kmediumTextStyle.copyWith(color: Colors.black45)),
+                      subtitle: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Text(username,
+                            textAlign: TextAlign.right,
+                            textDirection: TextDirection.rtl,
+                            style:
+                                kmediumTextStyle.copyWith(color: Colors.black)),
+                      ),
+                    ),
+                    ListTile(
+                      leading: IconButton(
+                        icon: const Icon(Icons.edit, color: kbuttonColor),
+                        onPressed: () {},
+                      ),
+                      dense: true,
+                      title: Text('رمز عبور :',
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          style:
+                              kmediumTextStyle.copyWith(color: Colors.black45)),
+                      subtitle: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Text(
+                          '********',
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          style:
+                              TextStyle(color: Colors.black, fontSize: 12.sp),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -137,26 +181,29 @@ SliverAppBar buildSliverAppBar() {
   );
 }
 
-class _CustomGlowSwitch extends StatefulWidget {
-  const _CustomGlowSwitch();
+class _CustomSwitch extends StatefulWidget {
+  
 
   @override
-  State<_CustomGlowSwitch> createState() => _CustomGlowSwitchState();
+  State<_CustomSwitch> createState() => _CustomSwitchState();
 }
 
-class _CustomGlowSwitchState extends State<_CustomGlowSwitch> {
-  bool switchSelected = false;
+class _CustomSwitchState extends State<_CustomSwitch> {
+  bool isSwitchOn = false;
   @override
   Widget build(BuildContext context) {
-    return GlowSwitch(
-      onChanged: (value) {
-        setState(() {
-          switchSelected = value;
-        });
-      },
-      value: switchSelected,
-      activeColor: kbuttonColor,
-      blurRadius: 2,
-    );
+    return Theme(
+        data: ThemeData(
+          useMaterial3: true,
+        ),
+        child: Switch(
+          value: isSwitchOn,
+          activeColor: kbuttonColor,
+          onChanged: (value) {
+            setState(() {
+              isSwitchOn = value;
+            });
+          },
+        ));
   }
 }

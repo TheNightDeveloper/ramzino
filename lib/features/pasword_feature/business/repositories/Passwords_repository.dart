@@ -9,11 +9,15 @@ abstract class PasswordsRepository {
     required PasswordParams passwordParams,
   });
   Future<Either<Failure, bool>> deletePassword({
-    required int index,
+    required String passID,
   });
   Future<Either<Failure, bool>> updatePassword({
-    required int index,
+    required PasswordParams passwordParams,
   });
   Future<Either<Failure, Map<String, List<PasswordEntity>>>>
       getAndSortPasswords();
+
+  Future<Either<Failure, bool>> mostUse({
+    required String passId,
+  });
 }

@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final TabController _tabController =
-        TabController(length: 3, vsync: this, initialIndex: 2);
+        TabController(length: 2, vsync: this, initialIndex: 1);
 
     return Scaffold(
         backgroundColor: kbgColor,
@@ -36,7 +36,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             } else if (state is PasswordDeletedState) {
               BlocProvider.of<PasswordBloc>(context)
                   .add(GetAllPasswordsEvent());
-              Fluttertoast.showToast(msg: 'رمز عبور حذف شد');
+              Fluttertoast.showToast(msg: 'رمز حذف شد');
+            } else if (state is AddToMostUseState) {
+              BlocProvider.of<PasswordBloc>(context)
+                  .add(GetAllPasswordsEvent());
+            } else if (state is PasswordUpdatedState) {
+              BlocProvider.of<PasswordBloc>(context)
+                  .add(GetAllPasswordsEvent());
+              Fluttertoast.showToast(msg: 'رمز ویرایش  شد');
             }
           },
           builder: (context, state) {

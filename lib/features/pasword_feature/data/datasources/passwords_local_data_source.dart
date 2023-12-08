@@ -6,8 +6,9 @@ import 'package:ramzino/features/pasword_feature/skeleton/page_resources.dart';
 abstract class PasswordsLocalDatabase {
   Future<bool> addToDB(PasswordModel passwordModel);
   Future<List<dynamic>> getAllPasswords();
-  Future<bool> deletePassword(int index);
-  Future<bool> updatePassword(int index, String? newValue);
+  Future<bool> deletePassword(String passID);
+  Future<bool> updatePassword(PasswordModel passwordModel);
+  Future<bool> mostUse(String passID);
 }
 
 class PasswordsLocalDatabaseImpl implements PasswordsLocalDatabase {
@@ -15,7 +16,6 @@ class PasswordsLocalDatabaseImpl implements PasswordsLocalDatabase {
   Future<bool> addToDB(PasswordModel passwordModel) async {
     try {
       await passwordsbox.add(passwordModel);
-      print('saved');
       return true;
     } catch (e) {
       print('unsaved:$e');
@@ -24,10 +24,13 @@ class PasswordsLocalDatabaseImpl implements PasswordsLocalDatabase {
   }
 
   @override
-  Future<bool> deletePassword(int index) async {
+  Future<bool> deletePassword(String passID) async {
     try {
-      await passwordsbox.deleteAt(index);
-      print('deleted');
+      int modelIndex = passwordsbox.values
+          .toList()
+          .indexWhere((passModel) => passModel.id == passID);
+      await passwordsbox.deleteAt(modelIndex);
+
       return true;
     } catch (e) {
       print('unDelete:$e');
@@ -37,25 +40,52 @@ class PasswordsLocalDatabaseImpl implements PasswordsLocalDatabase {
 
   @override
   Future<List<dynamic>> getAllPasswords() async {
-    List passLists = passwordsbox.values.toList();
-    // print('passwords:$allPass');
-    return passLists;
+    try {
+      List passLists = passwordsbox.values.toList();
+      // print('passwords:$allPass');
+      return passLists;
+    } catch (e) {
+      print('get all error $e');
+      throw DataBaseException();
+    }
   }
 
   @override
   Future<bool> updatePassword(
-    int index,
-    dynamic newValue,
-  ) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+    PasswordModel passwordModel,
+  ) async {
+    try {
+      int modelIndex = passwordsbox.values
+          .toList()
+          .indexWhere((passModel) => passModel.id == passwordModel.id);
+      await passwordsbox.putAt(modelIndex, passwordModel);
+      return true;
+    } catch (e) {
+      print('update error $e');
+      throw DataBaseException();
+    }
+  }
+
+  @override
+  Future<bool> mostUse(String passID) async {
+    try {
+      // passwordModel.isMostUse = !passwordModel.isMostUse;
+      int modelIndex = passwordsbox.values
+          .toList()
+          .indexWhere((passModel) => passModel.id == passID);
+      PasswordModel passwordModel = passwordsbox.getAt(modelIndex);
+      passwordModel.isMostUse = !passwordModel.isMostUse!;
+      await passwordsbox.putAt(modelIndex, passwordModel);
+
+      print(passwordModel.isMostUse);
+      // await passwordsbox.putAt(modelIndex, passwordModel);
+      return true;
+    } catch (e) {
+      print('most use error $e');
+      throw DataBaseException();
+    }
   }
 }
-
-
-
-
-
 
 /*
 import 'dart:convert';

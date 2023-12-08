@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'welcome_event.dart';
@@ -8,7 +7,6 @@ class WelcomeBloc extends Bloc<WelcomeEvent, WelcomeState> {
   WelcomeBloc() : super(const WelcomeState()) {
     on<Trigger>((event, emit) {
       emit(WelcomeState(index: event.index));
-      print(state.index);
     });
   }
 }

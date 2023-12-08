@@ -1,9 +1,8 @@
+import 'package:flutter/services.dart';
 import 'package:ramzino/core/params/password_params.dart';
-
-import 'package:ramzino/core/utils/enums.dart';
-
 import 'package:ramzino/features/auth_feature/presentation/widgets/widgets_resource.dart';
-import 'package:ramzino/features/pasword_feature/presentation/bloc/password_bloc.dart';
+import 'package:ramzino/features/pasword_feature/business/entities/password_entity.dart';
+import 'package:ramzino/features/pasword_feature/skeleton/page_resources.dart';
 import 'package:uuid/uuid.dart';
 
 class SearchInput extends StatelessWidget {
@@ -57,120 +56,6 @@ class SearchInput extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ListBuilder extends StatelessWidget {
-  final String listTitle, title, subTitle;
-  final Image? tileImage;
-  final ScrollController scrollController;
-  final int itemLen;
-  const ListBuilder(
-      {required this.listTitle,
-      required this.title,
-      required this.subTitle,
-      required this.itemLen,
-      this.tileImage,
-      required this.scrollController});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: RcrossAxisAlignment,
-      children: [
-        SizedBox(
-          height: 15.h,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-                onPressed: () {},
-                child: Text(
-                  'همه',
-                  style: kmediumTextStyle.copyWith(color: Colors.black87),
-                )),
-            Text(
-              listTitle,
-              style: kLargeTextStyle.copyWith(
-                  color: Colors.black87, fontSize: 20.sp),
-            ),
-          ],
-        ),
-        ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                ksecondColor,
-                Colors.transparent,
-                Colors.transparent,
-                ksecondColor
-              ],
-              stops: [
-                0.0,
-                0.13,
-                0.92,
-                1.0
-              ], // 10% purple, 80% transparent, 10% purple
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.dstOut,
-          child: Container(
-            margin: EdgeInsets.only(top: 15.h),
-            constraints: BoxConstraints(minHeight: 105.h, maxHeight: 220.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              // border: Border.all(
-              //     color: kbuttonColor.withOpacity(0.5),
-              //     width: 2.h,
-              //     strokeAlign: BorderSide.strokeAlignOutside),
-            ),
-            child: ListView.separated(
-              controller: scrollController,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-              shrinkWrap: true,
-              itemCount: itemLen,
-              itemBuilder: (context, index) => Card(
-                elevation: 2,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    title: Text(
-                      title,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20.sp),
-                    ),
-                    subtitle: Text(
-                      subTitle,
-                      textAlign: TextAlign.right,
-                    ),
-                    leading: const Icon(Icons.more_vert),
-                    trailing: tileImage,
-                  ),
-                ),
-              ),
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  thickness: 2,
-                );
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -240,7 +125,7 @@ class _FloatActionButtonState extends State<FloatActionButton> {
                           SizedBox(
                             height: 10.h,
                           ),
-                          AddForm(),
+                          const AddForm(),
                         ],
                       ),
                     ),
@@ -257,6 +142,8 @@ class _FloatActionButtonState extends State<FloatActionButton> {
 }
 
 class AddForm extends StatefulWidget {
+  const AddForm({super.key});
+
   // final TextEditingController title, username, password, describtion;
   @override
   State<AddForm> createState() => _AddFormState();
@@ -270,19 +157,13 @@ class _AddFormState extends State<AddForm> {
   String usernameLabel = '';
   String hint = '';
   TextInputType inputType = TextInputType.text;
-  late final PasswordType passwordType;
+  late PasswordType passwordType;
   bool categorySelected = false;
   List<DropdownMenuItem> items = const [
     DropdownMenuItem(
       value: PasswordType.social,
       child: Text('شبکه اجتماعی'),
     ),
-    // DropdownMenuItem(
-    //   value: PasswordType.application,
-    //   child: Text(
-    //     'اپلیکیشن',
-    //   ),
-    // ),
     DropdownMenuItem(
       value: PasswordType.creditCard,
       child: Text('کارت اعتباری'),
@@ -291,18 +172,16 @@ class _AddFormState extends State<AddForm> {
       value: PasswordType.webSite,
       child: Text('وبسایت'),
     ),
-    // DropdownMenuItem(
-    //   value: PasswordType.device,
-    //   child: Text('دستگاه'),
-    // ),
     DropdownMenuItem(
       value: PasswordType.other,
-      child: Text('متفرقه'),
+      child: Text(
+        'متفرقه',
+      ),
     ),
   ];
   //////
   String generateUUID() {
-    final uuid = Uuid();
+    final uuid = const Uuid();
     return uuid.v4();
   }
 
@@ -333,7 +212,7 @@ class _AddFormState extends State<AddForm> {
                       {
                         passwordType = value;
                         usernameLabel = 'شماره کارت';
-                        hint = 'شماره کارت خود را وارد کنید';
+                        hint = '0000-0000-0000-0000';
                         inputType = TextInputType.number;
                       }
                     case PasswordType.social:
@@ -368,10 +247,10 @@ class _AddFormState extends State<AddForm> {
                       EdgeInsets.symmetric(vertical: 2.h, horizontal: 7.w),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: const BorderSide(color: Colors.grey)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: ksecondColor)),
+                      borderSide: const BorderSide(color: ksecondColor)),
                   hintTextDirection: TextDirection.rtl,
                 ),
                 borderRadius: BorderRadius.circular(15),
@@ -457,9 +336,8 @@ class PasswordsList extends StatefulWidget {
     super.key,
     required ScrollController scrollController,
     required this.context,
-  }) : _scrollController = scrollController;
+  });
 
-  final ScrollController _scrollController;
   final BuildContext context;
 
   @override
@@ -467,20 +345,57 @@ class PasswordsList extends StatefulWidget {
 }
 
 class _PasswordsListState extends State<PasswordsList> {
+  bool _socialListExpanded = false;
+  bool _creditCardListExpanded = false;
+  bool _webSiteListExpanded = false;
+  bool _otherListExpanded = false;
+  bool _passwordVisibility = false;
+
+  Widget logoGenerator(PasswordEntity item) {
+    // Widget logo;
+    switch (item.type) {
+      case PasswordType.creditCard:
+        {
+          return MyIcons.creditCardIcon;
+        }
+      case PasswordType.social:
+        {
+          return MyIcons.socialIcon;
+        }
+      case PasswordType.other:
+        {
+          return MyIcons.otherIcon;
+        }
+      case PasswordType.webSite:
+        {
+          return MyIcons.webSiteIcon;
+        }
+      default:
+        return const SizedBox();
+    }
+  }
+
+  // ExpansionTileController expansionKey = ExpansionTileController();
+
   @override
   Widget build(BuildContext context) {
     var bloc = context.read<PasswordBloc>().state;
     return SliverToBoxAdapter(
       child: Column(children: [
+        /// SOCIAL LIST
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _socialListExpanded = !_socialListExpanded;
+                      });
+                    },
                     child: Text(
-                      'همه',
+                      _socialListExpanded ? 'بستن' : 'مشاهده همه',
                       style: kmediumTextStyle.copyWith(color: Colors.black87),
                     )),
                 Text(
@@ -501,32 +416,24 @@ class _PasswordsListState extends State<PasswordsList> {
                     Colors.transparent,
                     ksecondColor
                   ],
-                  stops: [
-                    0.0,
-                    0.13,
-                    0.92,
-                    1.0
-                  ], // 10% purple, 80% transparent, 10% purple
+                  stops: [0.0, 0.10, 0.90, 1.0],
                 ).createShader(bounds);
               },
               blendMode: BlendMode.dstOut,
               child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10.h),
-                  constraints:
-                      BoxConstraints(minHeight: 65.h, maxHeight: 220.h),
+                  margin: EdgeInsets.symmetric(vertical: 5.h),
+                  constraints: BoxConstraints(
+                      minHeight: 50.h,
+                      maxHeight:
+                          _socialListExpanded ? double.maxFinite : 220.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    // border: Border.all(
-                    //     color: kbuttonColor.withOpacity(0.5),
-                    //     width: 2.h,
-                    //     strokeAlign: BorderSide.strokeAlignOutside),
                   ),
                   child: bloc.socialList.isNotEmpty
                       ? ListView.separated(
-                          // controller: scrollController,
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(
-                              horizontal: 8.w, vertical: 5.h),
+                              horizontal: 1.w, vertical: 2.h),
                           shrinkWrap: true,
                           itemCount: bloc.socialList.length,
                           itemBuilder: (context, index) => Card(
@@ -534,28 +441,127 @@ class _PasswordsListState extends State<PasswordsList> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                title: Text(
-                                  bloc.socialList[index].title!,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.sp),
-                                ),
-                                subtitle: Text(
-                                  bloc.socialList[index].username!,
-                                  textAlign: TextAlign.right,
-                                ),
-                                leading: const Icon(Icons.more_vert),
-                                // trailing: tileImage,
+                            ///// EXPANSION TILE
+                            child: ExpansionTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              title: Text(
+                                bloc.socialList[index].title!,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.sp),
+                              ),
+                              subtitle: Text(
+                                bloc.socialList[index].username!,
+                                textAlign: TextAlign.right,
+                              ),
+                              leading: DropDownMenuFb1(
+                                  passwordEntity: bloc.socialList[index],
+                                  mostUseTitle:
+                                      bloc.socialList[index].isMostUse!
+                                          ? 'حذف از پرکاربردها'
+                                          : 'افزودن به پرکاربردها',
+                                  // onUpdate: ()=>UpdatePasswordForm(password:bloc.socialList[index]),
+                                  onDelete: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        DeletePasswordEvent(
+                                            passID:
+                                                bloc.socialList[index].id!));
+                                    Navigator.pop(context);
+                                  },
+                                  onAddtoMostUse: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        AddToMostUseEvent(
+                                            passId:
+                                                bloc.socialList[index].id!));
+                                    Navigator.pop(context);
+                                  }
+
+                                  /// Add to Mose Use list
+
+                                  ),
+                              trailing: logoGenerator(bloc.socialList[index]),
+                              children: [
+                                Divider(
+                                  thickness: 1,
+                                  color: Colors.grey.withOpacity(0.4),
+                                ),
+                                ListTile(
+                                  leading: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.copy,
+                                          color: kbuttonColor.withOpacity(0.5),
+                                        ),
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(
+                                                  text: bloc.socialList[index]
+                                                      .password!))
+                                              .then((_) =>
+                                                  Fluttertoast.showToast(
+                                                      msg: 'رمز کپی شد!'));
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          _passwordVisibility
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: kbuttonColor.withOpacity(0.6),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _passwordVisibility =
+                                                !_passwordVisibility;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  dense: true,
+                                  title: Text('رمز :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                        _passwordVisibility
+                                            ? bloc.socialList[index].password!
+                                            : '******',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12.sp)),
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  title: Text('توضیحات  :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                      bloc.socialList[index].describtion!,
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black87),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) {
@@ -575,15 +581,21 @@ class _PasswordsListState extends State<PasswordsList> {
             ),
           ],
         ),
+
+        /// CREDIT CARD LIST
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _creditCardListExpanded = !_creditCardListExpanded;
+                      });
+                    },
                     child: Text(
-                      'همه',
+                      _creditCardListExpanded ? 'بستن' : 'مشاهده همه',
                       style: kmediumTextStyle.copyWith(color: Colors.black87),
                     )),
                 Text(
@@ -604,29 +616,21 @@ class _PasswordsListState extends State<PasswordsList> {
                     Colors.transparent,
                     ksecondColor
                   ],
-                  stops: [
-                    0.0,
-                    0.13,
-                    0.92,
-                    1.0
-                  ], // 10% purple, 80% transparent, 10% purple
+                  stops: [0.0, 0.13, 0.92, 1.0],
                 ).createShader(bounds);
               },
               blendMode: BlendMode.dstOut,
               child: Container(
                   margin: EdgeInsets.symmetric(vertical: 10.h),
-                  constraints:
-                      BoxConstraints(minHeight: 65.h, maxHeight: 220.h),
+                  constraints: BoxConstraints(
+                      minHeight: 65.h,
+                      maxHeight:
+                          _creditCardListExpanded ? double.maxFinite : 250.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    // border: Border.all(
-                    //     color: kbuttonColor.withOpacity(0.5),
-                    //     width: 2.h,
-                    //     strokeAlign: BorderSide.strokeAlignOutside),
                   ),
                   child: bloc.creditCardList.isNotEmpty
                       ? ListView.separated(
-                          // controller: scrollController,
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(
                               horizontal: 8.w, vertical: 5.h),
@@ -637,29 +641,124 @@ class _PasswordsListState extends State<PasswordsList> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                title: Text(
-                                  bloc.creditCardList[index].title!,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.sp),
-                                ),
-                                subtitle: Text(
-                                  bloc.creditCardList[index].username!,
-                                  textAlign: TextAlign.right,
-                                ),
-                                leading: DropDownMenuFb1(
-                                ),
-                                // trailing: tileImage,
+                            child: ExpansionTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              title: Text(
+                                bloc.creditCardList[index].title!,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.sp),
+                              ),
+                              subtitle: Text(
+                                bloc.creditCardList[index].username!,
+                                textAlign: TextAlign.right,
+                              ),
+                              leading: DropDownMenuFb1(
+                                  passwordEntity: bloc.creditCardList[index],
+                                  mostUseTitle:
+                                      bloc.creditCardList[index].isMostUse!
+                                          ? 'حذف از پرکاربردها'
+                                          : 'افزودن به پرکاربردها',
+                                  onDelete: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        DeletePasswordEvent(
+                                            passID: bloc
+                                                .creditCardList[index].id!));
+                                    Navigator.pop(context);
+                                  },
+                                  onAddtoMostUse: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        AddToMostUseEvent(
+                                            passId: bloc
+                                                .creditCardList[index].id!));
+                                    Navigator.pop(context);
+                                  }),
+                              trailing:
+                                  logoGenerator(bloc.creditCardList[index]),
+                              children: [
+                                Divider(
+                                  thickness: 1,
+                                  color: Colors.grey.withOpacity(0.4),
+                                ),
+                                ListTile(
+                                  leading: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.copy,
+                                          color: kbuttonColor.withOpacity(0.5),
+                                        ),
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(
+                                                  text: bloc
+                                                      .creditCardList[index]
+                                                      .password!))
+                                              .then((_) =>
+                                                  Fluttertoast.showToast(
+                                                      msg: 'رمز کپی شد!'));
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          _passwordVisibility
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: kbuttonColor.withOpacity(0.6),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _passwordVisibility =
+                                                !_passwordVisibility;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  dense: true,
+                                  title: Text('رمز :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                        _passwordVisibility
+                                            ? bloc
+                                                .creditCardList[index].password!
+                                            : '******',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12.sp)),
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  title: Text('توضیحات  :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                      bloc.creditCardList[index].describtion!,
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black87),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) {
@@ -679,15 +778,21 @@ class _PasswordsListState extends State<PasswordsList> {
             ),
           ],
         ),
+
+        /// WEBSITE LIST
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _webSiteListExpanded = !_webSiteListExpanded;
+                      });
+                    },
                     child: Text(
-                      'همه',
+                      _webSiteListExpanded ? 'بستن' : 'مشاهده همه',
                       style: kmediumTextStyle.copyWith(color: Colors.black87),
                     )),
                 Text(
@@ -719,18 +824,15 @@ class _PasswordsListState extends State<PasswordsList> {
               blendMode: BlendMode.dstOut,
               child: Container(
                   margin: EdgeInsets.symmetric(vertical: 10.h),
-                  constraints:
-                      BoxConstraints(minHeight: 65.h, maxHeight: 220.h),
+                  constraints: BoxConstraints(
+                      minHeight: 65.h,
+                      maxHeight:
+                          _webSiteListExpanded ? double.maxFinite : 220.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    // border: Border.all(
-                    //     color: kbuttonColor.withOpacity(0.5),
-                    //     width: 2.h,
-                    //     strokeAlign: BorderSide.strokeAlignOutside),
                   ),
                   child: bloc.webSiteList.isNotEmpty
                       ? ListView.separated(
-                          // controller: scrollController,
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(
                               horizontal: 8.w, vertical: 5.h),
@@ -741,28 +843,121 @@ class _PasswordsListState extends State<PasswordsList> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                title: Text(
-                                  bloc.webSiteList[index].title!,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.sp),
-                                ),
-                                subtitle: Text(
-                                  bloc.webSiteList[index].username!,
-                                  textAlign: TextAlign.right,
-                                ),
-                                leading: const Icon(Icons.more_vert),
-                                // trailing: tileImage,
+                            child: ExpansionTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              title: Text(
+                                bloc.webSiteList[index].title!,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.sp),
+                              ),
+                              subtitle: Text(
+                                bloc.webSiteList[index].username!,
+                                textAlign: TextAlign.right,
+                              ),
+                              leading: DropDownMenuFb1(
+                                  passwordEntity: bloc.webSiteList[index],
+                                  mostUseTitle:
+                                      bloc.webSiteList[index].isMostUse!
+                                          ? 'حذف از پرکاربردها'
+                                          : 'افزودن به پرکاربردها',
+                                  onDelete: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        DeletePasswordEvent(
+                                            passID:
+                                                bloc.webSiteList[index].id!));
+                                    Navigator.pop(context);
+                                  },
+                                  onAddtoMostUse: () {
+                                    BlocProvider.of<PasswordBloc>(context).add(
+                                        AddToMostUseEvent(
+                                            passId:
+                                                bloc.webSiteList[index].id!));
+                                    Navigator.pop(context);
+                                  }),
+                              trailing: logoGenerator(bloc.webSiteList[index]),
+                              children: [
+                                Divider(
+                                  thickness: 1,
+                                  color: Colors.grey.withOpacity(0.4),
+                                ),
+                                ListTile(
+                                  leading: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.copy,
+                                          color: kbuttonColor.withOpacity(0.5),
+                                        ),
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(
+                                                  text: bloc.webSiteList[index]
+                                                      .password!))
+                                              .then((_) =>
+                                                  Fluttertoast.showToast(
+                                                      msg: 'رمز کپی شد!'));
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          _passwordVisibility
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: kbuttonColor.withOpacity(0.6),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _passwordVisibility =
+                                                !_passwordVisibility;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  dense: true,
+                                  title: Text('رمز :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                        _passwordVisibility
+                                            ? bloc.webSiteList[index].password!
+                                            : '******',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12.sp)),
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  title: Text('توضیحات  :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                      bloc.webSiteList[index].describtion!,
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black87),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) {
@@ -782,15 +977,21 @@ class _PasswordsListState extends State<PasswordsList> {
             ),
           ],
         ),
+
+        /// OTHER LIST
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _otherListExpanded = !_otherListExpanded;
+                      });
+                    },
                     child: Text(
-                      'همه',
+                      _otherListExpanded ? 'بستن' : 'مشاهده همه',
                       style: kmediumTextStyle.copyWith(color: Colors.black87),
                     )),
                 Text(
@@ -822,8 +1023,9 @@ class _PasswordsListState extends State<PasswordsList> {
               blendMode: BlendMode.dstOut,
               child: Container(
                   margin: EdgeInsets.symmetric(vertical: 10.h),
-                  constraints:
-                      BoxConstraints(minHeight: 65.h, maxHeight: 220.h),
+                  constraints: BoxConstraints(
+                      minHeight: 65.h,
+                      maxHeight: _otherListExpanded ? double.maxFinite : 220.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     // border: Border.all(
@@ -844,28 +1046,119 @@ class _PasswordsListState extends State<PasswordsList> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                title: Text(
-                                  bloc.otherList[index].title!,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.sp),
-                                ),
-                                subtitle: Text(
-                                  bloc.otherList[index].username!,
-                                  textAlign: TextAlign.right,
-                                ),
-                                leading: const Icon(Icons.more_vert),
-                                // trailing: tileImage,
+                            child: ExpansionTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              title: Text(
+                                bloc.otherList[index].title!,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.sp),
+                              ),
+                              subtitle: Text(
+                                bloc.otherList[index].username!,
+                                textAlign: TextAlign.right,
+                              ),
+                              leading: DropDownMenuFb1(
+                                passwordEntity: bloc.otherList[index],
+                                onAddtoMostUse: () {
+                                  BlocProvider.of<PasswordBloc>(context).add(
+                                      AddToMostUseEvent(
+                                          passId: bloc.otherList[index].id!));
+                                  Navigator.pop(context);
+                                },
+                                mostUseTitle: bloc.otherList[index].isMostUse!
+                                    ? 'حذف از پرکاربردها'
+                                    : 'افزودن به پرکاربردها',
+                                onDelete: () {
+                                  BlocProvider.of<PasswordBloc>(context).add(
+                                      DeletePasswordEvent(
+                                          passID: bloc.otherList[index].id!));
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              trailing: logoGenerator(bloc.otherList[index]),
+                              children: [
+                                Divider(
+                                  thickness: 1,
+                                  color: Colors.grey.withOpacity(0.4),
+                                ),
+                                ListTile(
+                                  leading: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.copy,
+                                          color: kbuttonColor.withOpacity(0.5),
+                                        ),
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(
+                                                  text: bloc.otherList[index]
+                                                      .password!))
+                                              .then((_) =>
+                                                  Fluttertoast.showToast(
+                                                      msg: 'رمز کپی شد!'));
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          _passwordVisibility
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: kbuttonColor.withOpacity(0.6),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _passwordVisibility =
+                                                !_passwordVisibility;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  dense: true,
+                                  title: Text('رمز :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                        _passwordVisibility
+                                            ? bloc.otherList[index].password!
+                                            : '******',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12.sp)),
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  title: Text('توضیحات  :',
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black45)),
+                                  subtitle: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+                                    child: Text(
+                                      bloc.otherList[index].describtion!,
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: kmediumTextStyle.copyWith(
+                                          color: Colors.black87),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           separatorBuilder: (BuildContext context, int index) {
@@ -888,152 +1181,4 @@ class _PasswordsListState extends State<PasswordsList> {
       ]),
     );
   }
-
-  Column newMethod(
-      {String listTitle = 'ss',
-      String title = 'kit',
-      String subTitle = 'kdfm',
-      int itemLen = 2}) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-                onPressed: () {},
-                child: Text(
-                  'همه',
-                  style: kmediumTextStyle.copyWith(color: Colors.black87),
-                )),
-            Text(
-              listTitle,
-              style: kLargeTextStyle.copyWith(
-                  color: Colors.black87, fontSize: 20.sp),
-            ),
-          ],
-        ),
-        ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                ksecondColor,
-                Colors.transparent,
-                Colors.transparent,
-                ksecondColor
-              ],
-              stops: [
-                0.0,
-                0.13,
-                0.92,
-                1.0
-              ], // 10% purple, 80% transparent, 10% purple
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.dstOut,
-          child: Container(
-            margin: EdgeInsets.only(top: 15.h),
-            constraints: BoxConstraints(minHeight: 105.h, maxHeight: 220.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              // border: Border.all(
-              //     color: kbuttonColor.withOpacity(0.5),
-              //     width: 2.h,
-              //     strokeAlign: BorderSide.strokeAlignOutside),
-            ),
-            child: ListView.separated(
-              // controller: scrollController,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-              shrinkWrap: true,
-              itemCount: itemLen,
-              itemBuilder: (context, index) => Card(
-                elevation: 2,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    title: Text(
-                      title,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20.sp),
-                    ),
-                    subtitle: Text(
-                      subTitle,
-                      textAlign: TextAlign.right,
-                    ),
-                    leading: const Icon(Icons.more_vert),
-                    // trailing: tileImage,
-                  ),
-                ),
-              ),
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  thickness: 2,
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
-/*
-return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return Column(
-            children: [
-              ListBuilder(
-                title: bloc.socialList[index].title!,
-                itemLen: bloc.socialList.length,
-                listTitle: 'شبکه های اجتماعی ',
-                subTitle:bloc.socialList[index].username!,
-                // tileImage:
-                // AnyLogo.media.instagram.image(height: 40, width: 40),
-                scrollController: widget._scrollController,
-              ),
-              ListBuilder(
-                title: bloc.creditCardList[index].title!,
-                itemLen: bloc.creditCardList.length,
-                listTitle: 'کارت های اعتباری',
-                subTitle: bloc.creditCardList[index].username!,
-                // tileImage:
-                // AnyLogo.media.instagram.image(height: 40, width: 40),
-                scrollController: widget._scrollController,
-              ),
-              ListBuilder(
-                title: bloc.webSiteList[index].title!,
-                itemLen: bloc.webSiteList.length,
-                listTitle: 'وبسایت ها',
-                subTitle: bloc.webSiteList[index].username!,
-                // tileImage:
-                // AnyLogo.media.instagram.image(height: 40, width: 40),
-                scrollController: widget._scrollController,
-              ),
-              ListBuilder(
-                title: bloc.otherList[index].title!,
-                itemLen: bloc.otherList.length,
-                listTitle: 'متفرقه ها',
-                subTitle: bloc.otherList[index].username!,
-                // tileImage:
-                // AnyLogo.media.instagram.image(height: 40, width: 40),
-                scrollController: widget._scrollController,
-              )
-            ],
-          );
-        },
-        childCount: 1
-      ),
-    );
-          */

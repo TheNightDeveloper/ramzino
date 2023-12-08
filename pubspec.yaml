@@ -6,7 +6,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.1 <4.0.0'
+  sdk: '>=3.2.0 <4.0.0'
 
 
 dependencies:
@@ -24,13 +24,13 @@ dependencies:
   equatable:
   fluttertoast:
   get_it: ^7.6.4
-  flutter_glow:
   flutter_secure_storage: ^9.0.0
   json_annotation:
   hive: ^2.2.3
   hive_flutter:
   uuid: ^4.2.1
   flutter_animate: ^4.3.0
+  
 
 dev_dependencies:
   json_serializable:

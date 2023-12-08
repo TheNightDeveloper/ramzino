@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       child: ScreenUtilInit(
         builder: (context, child) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.light(),
+          theme: ThemeData(useMaterial3: false),
           onGenerateRoute: AppPages.generateRoutes,
         ),
       ),

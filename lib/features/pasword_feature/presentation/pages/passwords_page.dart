@@ -20,6 +20,12 @@ class _PasswordsPageState extends State<PasswordsPage> {
         if (state is PasswordAddedState) {
           BlocProvider.of<PasswordBloc>(context).add(GetAllPasswordsEvent());
           Fluttertoast.showToast(msg: 'رمز عبور افزوده شد');
+        } else if (state is PasswordDeletedState) {
+          BlocProvider.of<PasswordBloc>(context).add(GetAllPasswordsEvent());
+          Fluttertoast.showToast(msg: 'رمز حذف شد');
+        } else if (state is PasswordUpdatedState) {
+          BlocProvider.of<PasswordBloc>(context).add(GetAllPasswordsEvent());
+          Fluttertoast.showToast(msg: 'رمز ویرایش  شد');
         }
       },
       builder: (context, state) {
@@ -35,8 +41,7 @@ class _PasswordsPageState extends State<PasswordsPage> {
             slivers: [
               sliverAppbar(_searchTextController),
               SliverPadding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.w),
+                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.w),
                 sliver: PasswordsList(
                   scrollController: _scrollController,
                   context: context,

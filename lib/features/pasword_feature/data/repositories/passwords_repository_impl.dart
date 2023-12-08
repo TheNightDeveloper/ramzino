@@ -31,9 +31,9 @@ class PasswordsRepositoryImpl implements PasswordsRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> deletePassword({required int index}) async {
+  Future<Either<Failure, bool>> deletePassword({required String passID}) async {
     try {
-      return Right(await _database.deletePassword(index));
+      return Right(await _database.deletePassword(passID));
     } on DataBaseException {
       return Left(DatabaseFailure(errorMessage: 'عملیات حذف ناموفق بود'));
     }
@@ -50,9 +50,13 @@ class PasswordsRepositoryImpl implements PasswordsRepository {
         'CreditCard': [],
         'WebSite': [],
         'Other': [],
+        'MostUse': []
       };
       for (var pass in passList) {
         allPass['All']!.add(pass);
+        if (pass.isMostUse!) {
+          allPass['MostUse']!.add(pass);
+        }
         if (pass.type == PasswordType.creditCard) {
           allPass['CreditCard']?.add(pass);
         } else if (pass.type == PasswordType.other) {
@@ -65,13 +69,33 @@ class PasswordsRepositoryImpl implements PasswordsRepository {
       }
       return Right(allPass);
     } on DataBaseException {
-      return Left(DatabaseFailure(errorMessage: 'عملیات بارگذاری ناموفق بود'));
+      return Left(DatabaseFailure(errorMessage: 'عملیات بارگیری ناموفق بود'));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> updatePassword({required int index}) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> updatePassword(
+      {required PasswordParams passwordParams}) async {
+    try {
+      var password = PasswordModel(
+          id: passwordParams.id,
+          username: passwordParams.username,
+          password: passwordParams.password,
+          describtion: passwordParams.describtion,
+          title: passwordParams.title,
+          type: passwordParams.type);
+      return Right(await _database.updatePassword(password));
+    } on DataBaseException {
+      return Left(DatabaseFailure(errorMessage: 'عملیات ویرایش ناموفق بود'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> mostUse({required String passId}) async {
+    try {
+      return Right(await _database.mostUse(passId));
+    } on DataBaseException {
+      return Left(DatabaseFailure(errorMessage: 'به پرکاربرد ها اضافه نشد!'));
+    }
   }
 }

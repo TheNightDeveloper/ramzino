@@ -39,6 +39,8 @@ depInjSetup() {
   locator.registerSingleton<AddPassword>(AddPassword(locator()));
   locator.registerSingleton<DeletePassword>(DeletePassword(locator()));
   locator.registerSingleton<UpdatePassword>(UpdatePassword(locator()));
+    locator.registerSingleton<MostUsePassword>(MostUsePassword(locator()));
+
 
   // locator.registerSingleton<UseCase>(DeletePassword(locator()));
   // locator.registerSingleton<UseCase>(GetAllPasswords(locator()));
@@ -50,5 +52,6 @@ depInjSetup() {
       addPassword: locator(),
       getAndSortPasswords: locator(),
       deletePassword: locator(),
-      updatePassword: locator()));
+      updatePassword: locator(),
+      mostUsePassword: locator()));
 }

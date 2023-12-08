@@ -12,12 +12,14 @@ class PasswordBloc extends Bloc<PasswordEvent, PasswordState> {
   final AddPassword addPassword;
   final DeletePassword deletePassword;
   final UpdatePassword updatePassword;
+  final MostUsePassword mostUsePassword;
 
   PasswordBloc(
       {required this.deletePassword,
       required this.updatePassword,
       required this.getAndSortPasswords,
-      required this.addPassword})
+      required this.addPassword,
+      required this.mostUsePassword})
       : super(PasswordState()) {
     on<PasswordEvent>((event, emit) async {
       if (event is AddPasswordEvent) {
@@ -26,27 +28,37 @@ class PasswordBloc extends Bloc<PasswordEvent, PasswordState> {
         final failureOrList = await addPassword(params: event.passwordParams);
         emit(failureOrList.fold(
             (fail) => ErrorState(message: fail.errorMessage),
-            (list) => PasswordAddedState()));
+            (added) => PasswordAddedState()));
       } else if (event is DeletePasswordEvent) {
         //  Deleting Password
         emit(LoadingState());
-        final failureOrSuccess = await deletePassword(params: event.index);
+        final failureOrSuccess = await deletePassword(params: event.passID);
         emit(failureOrSuccess.fold(
             (fail) => ErrorState(message: fail.errorMessage),
-            (list) => PasswordDeletedState()));
+            (deleted) => PasswordDeletedState()));
       } else if (event is UpdatePasswordEvent) {
-        // TODO Updating Password
+        emit(LoadingState());
+        final failureOrSuccess =
+            await updatePassword(params: event.passwordParams);
+        emit(failureOrSuccess.fold(
+            (fail) => ErrorState(message: fail.errorMessage),
+            (deleted) => PasswordUpdatedState()));
       } else if (event is GetAllPasswordsEvent) {
         emit(LoadingState());
         final failureOrList = await getAndSortPasswords();
         emit(failureOrList.fold(
             (fail) => ErrorState(message: fail.errorMessage),
-            (map) =>  PasswordState.copyWith(map)));
+            (map) => PasswordState.copyWith(map)));
         // TODO Getting Password
       } else if (event is DarkModeSwitchEvent) {
         // TODO Getting Password
-      } else if (event is SortPasswordEvent) {
-       
+      } else if (event is AddToMostUseEvent) {
+        emit(LoadingState());
+        final failureOrSuccess = await mostUsePassword(params: event.passId);
+        emit(failureOrSuccess.fold(
+          (fail) => ErrorState(message: fail.errorMessage),
+          (success) => AddToMostUseState(),
+        ));
       }
     });
   }

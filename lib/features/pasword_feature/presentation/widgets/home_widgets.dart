@@ -1,3 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ramzino/core/widgets/common_widgets.dart';
 import 'package:ramzino/features/auth_feature/presentation/bloc/auth_bloc.dart'
     as auth;
 import 'package:ramzino/features/pasword_feature/business/entities/password_entity.dart';
@@ -54,7 +57,7 @@ class DashboardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      height: MediaQuery.sizeOf(context).height * 0.55,
+      height: MediaQuery.sizeOf(context).height * 0.53,
       decoration: const BoxDecoration(
           gradient: LinearGradient(
               colors: [kmainColor, ksecondColor],
@@ -72,6 +75,7 @@ class DashboardContainer extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: RmainAxisAlignment,
               children: [
+                /// USERNAME  VIEWER
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
                   decoration: BoxDecoration(
@@ -96,31 +100,22 @@ class DashboardContainer extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 15.h,
-            ),
+            SizedBox(height: 10.h),
             _SearchInput(
                 textController: _searchTextControl, hintText: 'جستجو...'),
-            SizedBox(
-              height: 15.h,
-            ),
+            SizedBox(height: 10.h),
             Text(
               'مدیریت',
               style: kmediumTextStyle,
             ),
-            SizedBox(
-              height: 10.h,
-            ),
             Padding(
-              padding: EdgeInsets.only(
-                right: 10.w,
-              ),
+              padding: EdgeInsets.only(right: 8.w, top: 5.h),
               child: Text(
                 'رمز ها',
                 style: kLargeTextStyle,
               ),
             ),
-            Expanded(child: _buildGridView(context))
+            Expanded(child: _BuildGridView(context))
           ],
         ),
       ),
@@ -180,9 +175,9 @@ class _SearchInput extends StatelessWidget {
   }
 }
 
-class _buildGridView extends StatelessWidget {
+class _BuildGridView extends StatelessWidget {
   final BuildContext context;
-  const _buildGridView(this.context);
+  const _BuildGridView(this.context);
 
   @override
   Widget build(BuildContext context) {
@@ -204,22 +199,6 @@ class _buildGridView extends StatelessWidget {
               icon: MyIcons.socialIcon,
               subtitle: state.socialList.length.toString()),
         ),
-        // GestureDetector(
-        //   onTap: () => BlocProvider.of<PasswordBloc>(context).add(
-        //       AddPasswordEvent(PasswordParams(
-        //           title: 'telegram',
-        //           username: 'sadegh',
-        //           password: '1234',
-        //           describtion: 'this is a test'))),
-        //   child: _gridCard(
-        //     title: 'اپلیکیشن',
-        //     icon: Icon(Icons.apps),
-        //   ),
-        // ),
-        // _gridCard(
-        //   title: 'حساب بانکی',
-        //   icon: Icon(Icons.monetization_on),
-        // ),
         GestureDetector(
             child: _gridCard(
                 title: 'کارت اعتباری',
@@ -247,8 +226,8 @@ Widget _gridCard(
   return Padding(
     padding: EdgeInsets.all(5.h),
     child: Container(
-      width: 150,
-      height: 150,
+      // width: 120,
+      // height: 120,
       padding: EdgeInsets.all(5.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -262,15 +241,13 @@ Widget _gridCard(
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           CircleAvatar(
-              maxRadius: 18.h,
+              maxRadius: 15.h,
               backgroundColor: Colors.transparent,
               // foregroundColor: kbgColor,
               child: icon),
-          SizedBox(
-            height: 8.h,
-          ),
           Text(title,
               textAlign: TextAlign.center,
               textDirection: TextDirection.rtl,
@@ -278,16 +255,13 @@ Widget _gridCard(
                   color: Colors.black,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w800)),
-          SizedBox(
-            height: 5.h,
-          ),
           Text(
             ' $subtitle رمز ',
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
             style: kmediumTextStyle.copyWith(
               color: Colors.black,
-              fontSize: 13.sp,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -297,7 +271,7 @@ Widget _gridCard(
 }
 /////
 
-class TabsContainer extends StatelessWidget {
+class TabsContainer extends StatefulWidget {
   const TabsContainer({
     super.key,
     required TabController tabController,
@@ -305,17 +279,17 @@ class TabsContainer extends StatelessWidget {
   }) : _tabController = tabController;
   final BuildContext context;
   final TabController _tabController;
+
+  @override
+  State<TabsContainer> createState() => _TabsContainerState();
+}
+
+class _TabsContainerState extends State<TabsContainer> {
+  bool _passwordVisibility = false;
   final List<Widget> tabs = const [
     Tab(
       child: Text(
-        'مورد علاقه ',
-        textDirection: TextDirection.rtl,
-        textAlign: TextAlign.center,
-      ),
-    ),
-    Tab(
-      child: Text(
-        'اخیر ',
+        'پرکاربردها ',
         textDirection: TextDirection.rtl,
         textAlign: TextAlign.center,
       ),
@@ -328,6 +302,7 @@ class TabsContainer extends StatelessWidget {
       ),
     )
   ];
+
   Widget logoGenerator(PasswordEntity item) {
     // Widget logo;
     switch (item.type) {
@@ -357,7 +332,7 @@ class TabsContainer extends StatelessWidget {
     var state = context.read<PasswordBloc>().state;
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      height: MediaQuery.sizeOf(context).height * 0.38,
+      height: MediaQuery.sizeOf(context).height * .41,
       decoration: const BoxDecoration(
         color: kbgColor,
       ),
@@ -378,6 +353,7 @@ class TabsContainer extends StatelessWidget {
               children: [
                 TabBar(
                     unselectedLabelColor: Colors.grey,
+                    indicatorWeight: 1,
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicator: BoxDecoration(
                         color: kbuttonColor,
@@ -385,7 +361,7 @@ class TabsContainer extends StatelessWidget {
                     isScrollable: false,
                     labelStyle: kmediumTextStyle,
                     labelColor: Colors.black,
-                    controller: _tabController,
+                    controller: widget._tabController,
                     tabs: tabs),
               ],
             ),
@@ -410,102 +386,153 @@ class TabsContainer extends StatelessWidget {
                   ).createShader(bounds);
                 },
                 blendMode: BlendMode.dstOut,
-                child: TabBarView(controller: _tabController, children: [
-                  /// favorites
+                child: TabBarView(controller: widget._tabController, children: [
+                  /// most use
                   ListView.builder(
-                      itemCount: state.favoriteList.isEmpty
-                          ? 1
-                          : state.favoriteList.length,
-                      itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 2.h),
-                            child: Card(
-                              elevation: 2,
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.white,
+                    itemCount: state.mostUseList.isEmpty
+                        ? 1
+                        : state.mostUseList.length,
+                    itemBuilder: (context, index) => Card(
+                        elevation: 2,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        ///// EXPANSION TILE
+                        child: state.mostUseList.isNotEmpty
+                            ? ExpansionTile(
+                                backgroundColor: Colors.white,
+                                collapsedShape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                collapsedBackgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                title: Text(
+                                  state.mostUseList[index].title!,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.sp),
+                                ),
+                                subtitle: Text(
+                                  state.mostUseList[index].username!,
+                                  textAlign: TextAlign.right,
+                                ),
+                                leading: DropDownMenuFb1(
+                                    mostUseTitle: 'حذف از پرکاربرد ها',
+                                    onDelete: () {
+                                      BlocProvider.of<PasswordBloc>(context)
+                                          .add(DeletePasswordEvent(
+                                              passID: state
+                                                  .mostUseList[index].id!));
+                                      Navigator.pop(context);
+                                    },
+                                    onAddtoMostUse: () {
+                                      BlocProvider.of<PasswordBloc>(context)
+                                          .add(AddToMostUseEvent(
+                                              passId: state
+                                                  .mostUseList[index].id!));
+                                      Navigator.pop(context);
+                                    }),
+                                trailing:
+                                    logoGenerator(state.mostUseList[index]),
+                                children: [
+                                  Divider(
+                                    thickness: 1,
+                                    color: Colors.grey.withOpacity(0.4),
                                   ),
-                                  child: state.favoriteList.isNotEmpty
-                                      ? ListTile(
-                                          title: Text(
-                                            '${state.favoriteList[index].title}',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20.sp),
+                                  ListTile(
+                                    leading: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.copy,
+                                            color:
+                                                kbuttonColor.withOpacity(0.5),
                                           ),
-                                          subtitle: Text(
-                                            '${state.favoriteList[index].username}',
-                                            textAlign: TextAlign.right,
+                                          onPressed: () async {
+                                            await Clipboard.setData(
+                                                    ClipboardData(
+                                                        text: state
+                                                            .mostUseList[index]
+                                                            .password!))
+                                                .then((_) =>
+                                                    Fluttertoast.showToast(
+                                                        msg: 'رمز کپی شد!'));
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            _passwordVisibility
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color:
+                                                kbuttonColor.withOpacity(0.6),
                                           ),
-                                          leading:
-                                              Icon(Icons.arrow_back_ios_new),
-                                          trailing: logoGenerator(
-                                              state.favoriteList[index]),
-                                        )
-                                      : SizedBox.square(
-                                          dimension: 50.h,
-                                          child: Center(
-                                            child: Text(
-                                              'چیزی برای نمایش وجود ندارد',
-                                              style: kmediumTextStyle.copyWith(
-                                                  color: Colors.grey),
-                                            ),
-                                          ),
-                                        )),
-                            ),
-                          )),
-
-                  /// recent use
-                  ListView.builder(
-                      itemCount: state.recentUsedList.isEmpty
-                          ? 1
-                          : state.recentUsedList.length,
-                      itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 2.h),
-                            child: Card(
-                              elevation: 2,
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.white,
+                                          onPressed: () {
+                                            setState(() {
+                                              _passwordVisibility =
+                                                  !_passwordVisibility;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    dense: true,
+                                    title: Text('رمز :',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: kmediumTextStyle.copyWith(
+                                            color: Colors.black45)),
+                                    subtitle: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.h),
+                                      child: Text(
+                                          _passwordVisibility
+                                              ? state
+                                                  .mostUseList[index].password!
+                                              : '******',
+                                          textAlign: TextAlign.right,
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12.sp)),
+                                    ),
                                   ),
-                                  child: state.recentUsedList.isNotEmpty
-                                      ? ListTile(
-                                          title: Text(
-                                            '${state.recentUsedList[index].title}',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20.sp),
-                                          ),
-                                          subtitle: Text(
-                                            '${state.recentUsedList[index].username}',
-                                            textAlign: TextAlign.right,
-                                          ),
-                                          leading:
-                                              Icon(Icons.arrow_back_ios_new),
-                                          trailing: logoGenerator(
-                                              state.recentUsedList[index]),
-                                        )
-                                      : SizedBox.square(
-                                          dimension: 50.h,
-                                          child: Center(
-                                            child: Text(
-                                              'چیزی برای نمایش وجود ندارد',
-                                              style: kmediumTextStyle.copyWith(
-                                                  color: Colors.grey),
-                                            ),
-                                          ),
-                                        )),
-                            ),
-                          )),
+                                  ListTile(
+                                    dense: true,
+                                    title: Text('توضیحات  :',
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: kmediumTextStyle.copyWith(
+                                            color: Colors.black45)),
+                                    subtitle: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.h),
+                                      child: Text(
+                                        state.mostUseList[index].describtion!,
+                                        textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
+                                        style: kmediumTextStyle.copyWith(
+                                            color: Colors.black87),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : SizedBox.square(
+                                dimension: 50.h,
+                                child: Center(
+                                  child: Text(
+                                    '!رمز پرکاربردی وجود ندارد',
+                                    style: kmediumTextStyle.copyWith(
+                                        color: Colors.grey),
+                                  ),
+                                ),
+                              )),
+                  ),
 
                   /// all
                   ListView.builder(
@@ -520,100 +547,176 @@ class TabsContainer extends StatelessWidget {
                                   child: CircularProgressIndicator(),
                                 );
                               }
-                              return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 2.h),
-                                child: Card(
+                              return Card(
                                   elevation: 2,
                                   color: Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15)),
-                                  child: Container(
-                                      margin: EdgeInsets.all(2.w),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Colors.white,
-                                      ),
-                                      child: state.allPasswords.isNotEmpty
-                                          ? ListTile(
-                                              onTap: () {
-                                                print(
-                                                    state.allPasswords.length);
+                                  ///// EXPANSION TILE
+                                  child: state.allPasswords.isNotEmpty
+                                      ? ExpansionTile(
+                                          backgroundColor: Colors.white,
+                                          collapsedShape:
+                                              RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          collapsedBackgroundColor:
+                                              Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          title: Text(
+                                            state.allPasswords[index].title!,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20.sp),
+                                          ),
+                                          subtitle: Text(
+                                            state.allPasswords[index].username!,
+                                            textAlign: TextAlign.right,
+                                          ),
+                                          leading: DropDownMenuFb1(
+                                              passwordEntity:
+                                                  state.allPasswords[index],
+                                              mostUseTitle: state
+                                                      .allPasswords[index]
+                                                      .isMostUse!
+                                                  ? 'حذف از پرکاربرد ها'
+                                                  : 'افزودن به پرکاربردها',
+                                              onDelete: () {
+                                                BlocProvider.of<PasswordBloc>(
+                                                        context)
+                                                    .add(DeletePasswordEvent(
+                                                        passID: state
+                                                            .allPasswords[index]
+                                                            .id!));
+                                                Navigator.pop(context);
                                               },
-                                              onLongPress: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext ctx) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Please Confirm'),
-                                                        content: const Text(
-                                                            'Are you sure to remove the box?'),
-                                                        actions: [
-                                                          // The "Yes" button
-                                                          TextButton(
-                                                              onPressed: () {
-                                                                BlocProvider.of<
-                                                                            PasswordBloc>(
-                                                                        context)
-                                                                    .add(DeletePasswordEvent(
-                                                                        index));
-
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: const Text(
-                                                                  'Yes')),
-                                                          TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: const Text(
-                                                                  'No'))
-                                                        ],
-                                                      );
-                                                    });
-                                              },
-                                              title: Text(
-                                                // " ${state.allPasswords[index].title}",
-                                                " ${state.allPasswords[index].title}",
-                                                textAlign: TextAlign.right,
-                                                style: kLargeTextStyle.copyWith(
-                                                    color: Colors.black87,
-                                                    fontSize: 16.sp),
+                                              onAddtoMostUse: () {
+                                                BlocProvider.of<PasswordBloc>(
+                                                        context)
+                                                    .add(AddToMostUseEvent(
+                                                        passId: state
+                                                            .allPasswords[index]
+                                                            .id!));
+                                                Navigator.pop(context);
+                                              }),
+                                          trailing: logoGenerator(
+                                              state.allPasswords[index]),
+                                          children: [
+                                            Divider(
+                                              thickness: 1,
+                                              color:
+                                                  Colors.grey.withOpacity(0.4),
+                                            ),
+                                            ListTile(
+                                              leading: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.copy,
+                                                      color: kbuttonColor
+                                                          .withOpacity(0.5),
+                                                    ),
+                                                    onPressed: () async {
+                                                      await Clipboard.setData(
+                                                              ClipboardData(
+                                                                  text: state
+                                                                      .allPasswords[
+                                                                          index]
+                                                                      .password!))
+                                                          .then((_) => Fluttertoast
+                                                              .showToast(
+                                                                  msg:
+                                                                      'رمز کپی شد!'));
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      _passwordVisibility
+                                                          ? Icons.visibility
+                                                          : Icons
+                                                              .visibility_off,
+                                                      color: kbuttonColor
+                                                          .withOpacity(0.6),
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _passwordVisibility =
+                                                            !_passwordVisibility;
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                              subtitle: Text(
-                                                " ${state.allPasswords[index].username}",
-                                                textAlign: TextAlign.right,
-                                                style:
-                                                    kmediumTextStyle.copyWith(
-                                                        color: Colors.grey,
-                                                        fontSize: 14.sp),
-                                              ),
-                                              trailing: logoGenerator(
-                                                  state.allPasswords[index]),
-                                              leading: const Icon(
-                                                Icons.arrow_back_ios_new,
-                                                size: 25,
-                                                color: ksecondColor,
-                                              ),
-                                            )
-                                          : SizedBox.square(
-                                              dimension: 50.h,
-                                              child: Center(
-                                                child: Text(
-                                                  '!چیزی برای نمایش وجود ندارد',
+                                              dense: true,
+                                              title: Text('رمز :',
+                                                  textAlign: TextAlign.right,
+                                                  textDirection:
+                                                      TextDirection.rtl,
                                                   style:
                                                       kmediumTextStyle.copyWith(
-                                                          color: Colors.grey),
+                                                          color:
+                                                              Colors.black45)),
+                                              subtitle: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10.h),
+                                                child: Text(
+                                                    _passwordVisibility
+                                                        ? state
+                                                            .allPasswords[index]
+                                                            .password!
+                                                        : '******',
+                                                    textAlign: TextAlign.right,
+                                                    textDirection:
+                                                        TextDirection.rtl,
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12.sp)),
+                                              ),
+                                            ),
+                                            ListTile(
+                                              dense: true,
+                                              title: Text('توضیحات  :',
+                                                  textAlign: TextAlign.right,
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  style:
+                                                      kmediumTextStyle.copyWith(
+                                                          color:
+                                                              Colors.black45)),
+                                              subtitle: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10.h),
+                                                child: Text(
+                                                  state.allPasswords[index]
+                                                      .describtion!,
+                                                  textAlign: TextAlign.right,
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  style:
+                                                      kmediumTextStyle.copyWith(
+                                                          color:
+                                                              Colors.black87),
                                                 ),
                                               ),
-                                            )),
-                                ),
-                              );
+                                            )
+                                          ],
+                                        )
+                                      : SizedBox.square(
+                                          dimension: 50.h,
+                                          child: Center(
+                                            child: Text(
+                                              '!رمز پرکاربردی وجود ندارد',
+                                              style: kmediumTextStyle.copyWith(
+                                                  color: Colors.grey),
+                                            ),
+                                          ),
+                                        ));
                             },
                           ))
                 ]),

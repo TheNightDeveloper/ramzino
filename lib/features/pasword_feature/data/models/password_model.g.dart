@@ -17,6 +17,7 @@ class PasswordModelAdapter extends TypeAdapter<PasswordModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PasswordModel(
+      isMostUse: fields[6] as bool?,
       username: fields[3] as String?,
       describtion: fields[4] as String?,
       title: fields[0] as String?,
@@ -29,7 +30,7 @@ class PasswordModelAdapter extends TypeAdapter<PasswordModel> {
   @override
   void write(BinaryWriter writer, PasswordModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class PasswordModelAdapter extends TypeAdapter<PasswordModel> {
       ..writeByte(4)
       ..write(obj.describtion)
       ..writeByte(5)
-      ..write(obj.password);
+      ..write(obj.password)
+      ..writeByte(6)
+      ..write(obj.isMostUse);
   }
 
   @override

@@ -19,22 +19,22 @@ class AddPassword implements UseCase<Either<Failure, bool>, PasswordParams> {
 }
 
 /// DELETE PASSWORD USECASE
-class DeletePassword implements UseCase<Either<Failure, bool>, int> {
+class DeletePassword implements UseCase<Either<Failure, bool>, String> {
   final PasswordsRepository _passwordsRepository;
   DeletePassword(this._passwordsRepository);
   @override
-  Future<Either<Failure, bool>> call({int? params}) async {
-    return await _passwordsRepository.deletePassword(index: params!);
+  Future<Either<Failure, bool>> call({String? params}) async {
+    return await _passwordsRepository.deletePassword(passID: params!);
   }
 }
 
 /// UPDATE PASSWORD USECASE
-class UpdatePassword implements UseCase<Either<Failure, bool>, int> {
+class UpdatePassword implements UseCase<Either<Failure, bool>, PasswordParams> {
   final PasswordsRepository _passwordsRepository;
   UpdatePassword(this._passwordsRepository);
   @override
-  Future<Either<Failure, bool>> call({int? params}) async {
-    return await _passwordsRepository.updatePassword(index: params!);
+  Future<Either<Failure, bool>> call({PasswordParams? params}) async {
+    return await _passwordsRepository.updatePassword(passwordParams: params!);
   }
 }
 
@@ -48,5 +48,14 @@ class GetAndSortPasswords
   Future<Either<Failure, Map<String, List<PasswordEntity>>>> call(
       {void params}) {
     return _passwordsRepository.getAndSortPasswords();
+  }
+}
+
+class MostUsePassword implements UseCase<Either<Failure, bool>, String> {
+  final PasswordsRepository _passwordsRepository;
+  MostUsePassword(this._passwordsRepository);
+  @override
+  Future<Either<Failure, bool>> call({String? params}) async {
+    return await _passwordsRepository.mostUse(passId: params!);
   }
 }

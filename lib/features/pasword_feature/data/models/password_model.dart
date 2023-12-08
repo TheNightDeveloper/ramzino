@@ -7,30 +7,35 @@ part 'password_model.g.dart';
 @HiveType(typeId: 1)
 class PasswordModel extends PasswordEntity {
   @HiveField(0)
-  final String? title;
+   String? title;
   @HiveField(1)
-  final PasswordType? type;
+   PasswordType? type;
   @HiveField(2)
   final String? id;
   @HiveField(3)
-  final String? username;
+   String? username;
   @HiveField(4)
-  final String? describtion;
+   String? describtion;
   @HiveField(5)
-  final String? password;
-  const PasswordModel({this.username, 
+   String? password;
+  @HiveField(6,defaultValue: false)
+   bool? isMostUse;
+  
+   PasswordModel({this.username, 
       this.describtion,
       this.title,
       this.password,
       this.id,
-      this.type})
+      this.type,
+      this.isMostUse=false})
       : super(
             id: id,
             title: title,
             type: type,
             describtion: describtion,
             username: username,
-            password: password);
+            password: password,
+            isMostUse: isMostUse);
 }
 
 
