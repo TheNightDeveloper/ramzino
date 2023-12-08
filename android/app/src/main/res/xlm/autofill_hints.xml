@@ -1,8 +1,0 @@
-<autofill-hints>
-    <hint
-        android:hintId="@string/username"
-        android:autofillValue="text"/>
-    <hint
-        android:hintId="@string/email"
-        android:autofillValue="emailAddress"/>
-</autofill-hints>
